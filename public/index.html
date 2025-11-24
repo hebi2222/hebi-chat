@@ -1,349 +1,41 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Hebi Chat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-
-    body {
-      background:#050816;
-      color:white;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      min-height:100vh;
-      padding:12px;
-    }
-
-    .chat-box {
-      width: 100%;
-      max-width: 900px;
-      background:#0f172a;
-      border-radius:18px;
-      padding:16px 18px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      box-shadow:0 20px 40px rgba(0,0,0,0.5);
-      border:1px solid rgba(148,163,184,0.2);
-    }
-
-    /* --- TOP BAR --- */
-    .top-row {
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .top-row h2 {
-      margin-right:auto;
-      color:#a855f7;
-      font-size:20px;
-      display:flex;
-      align-items:center;
-      gap:6px;
-    }
-    .badge {
-      font-size:10px;
-      padding:2px 6px;
-      border-radius:999px;
-      background:rgba(56,189,248,0.15);
-      color:#38bdf8;
-      text-transform:uppercase;
-      letter-spacing:0.04em;
-    }
-
-    .top-group {
-      display:flex;
-      align-items:center;
-      gap:6px;
-      flex-wrap:wrap;
-    }
-
-    .top-row label {
-      font-size:13px;
-      color:#cbd5f5;
-    }
-
-    .top-row select,
-    .top-row input {
-      padding:6px 8px;
-      border-radius:999px;
-      border:none;
-      background:#020617;
-      color:white;
-      font-size:13px;
-      outline:none;
-    }
-
-    #room {
-      min-width:110px;
-    }
-
-    #username {
-      min-width:130px;
-    }
-
-    .hint {
-      font-size:11px;
-      color:#94a3b8;
-    }
-
-    /* --- MESSAGES BOX --- */
-    #messages {
-      flex:1;
-      background:#020617;
-      padding:10px;
-      border-radius:12px;
-      overflow-y:auto;
-      height:380px;
-      font-size:14px;
-      scroll-behavior:smooth;
-    }
-
-    .msg {
-      margin-bottom:8px;
-      padding:6px 8px;
-      border-radius:10px;
-      background:rgba(15,23,42,0.9);
-    }
-
-    .user {
-      font-weight:600;
-      color:#38bdf8;
-    }
-    .room-tag {
-      font-size:11px;
-      color:#a855f7;
-      margin-left:4px;
-    }
-    .time {
-      font-size:11px;
-      color:#64748b;
-      margin-left:6px;
-    }
-    .text {
-      margin-top:2px;
-      display:block;
-      color:#e2e8f0;
-      word-wrap:break-word;
-      white-space:pre-wrap;
-    }
-
-    /* --- INPUTS --- */
-    .inputs {
-      display:flex;
-      gap:8px;
-      margin-top:8px;
-    }
-    input.message-input {
-      padding:9px 11px;
-      border-radius:999px;
-      border:none;
-      background:#020617;
-      color:white;
-      flex:1;
-      font-size:14px;
-      outline:none;
-    }
-    button {
-      background:#a855f7;
-      border:none;
-      padding:9px 16px;
-      border-radius:999px;
-      color:white;
-      cursor:pointer;
-      white-space:nowrap;
-      font-size:14px;
-      font-weight:500;
-      display:flex;
-      align-items:center;
-      gap:4px;
-    }
-    button span.icon {
-      font-size:16px;
-    }
-    button:hover {
-      opacity:0.92;
-    }
-    button:active {
-      transform:scale(0.98);
-    }
-
-    /* --- MOBILE (<= 768px) --- */
-    @media (max-width: 768px) {
-      body {
-        align-items:stretch;
-        padding:8px;
-      }
-      .chat-box {
-        height: calc(100vh - 16px);
-        max-width:100%;
-        padding:12px;
-        border-radius:14px;
-      }
-      .top-row {
-        flex-direction:column;
-        align-items:flex-start;
-      }
-      .top-group {
-        width:100%;
-        justify-content:space-between;
-      }
-      #username {
-        flex:1;
-      }
-      #room {
-        flex:1;
-      }
-      #messages {
-        height:auto;
-        min-height:0;
-      }
-      .inputs {
-        flex-direction:row;
-      }
-      input.message-input {
-        font-size:13px;
-      }
-      button {
-        padding:9px 10px;
-        font-size:13px;
-      }
-    }
-
-    /* --- SIÊU NHỎ (<= 480px) --- */
-    @media (max-width: 480px) {
-      .chat-box {
-        padding:10px;
-      }
-      .top-row h2 {
-        font-size:18px;
-      }
-      .top-group {
-        flex-direction:column;
-        align-items:stretch;
-      }
-      #room,
-      #username {
-        width:100%;
-      }
-      .inputs {
-        flex-direction:column;
-      }
-      button {
-        width:100%;
-        justify-content:center;
-      }
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/style.css">
 </head>
-<body>
-  <div class="chat-box">
-    <div class="top-row">
-      <h2>
-        💬 Hebi Chat
-        <span class="badge">beta</span>
-      </h2>
+<body class="chat-body">
+  <div class="chat-wrapper">
+    <div class="chat-top">
+      <div class="chat-title">
+        <h2>💬 Hebi Chat</h2>
+        <span class="badge">whitelist only</span>
+      </div>
 
-      <div class="top-group">
-        <label for="room">Phòng</label>
-        <select id="room">
-          <option value="general">general</option>
-          <option value="dev">dev</option>
-          <option value="smp">smp</option>
-          <option value="random">random</option>
-        </select>
-
-        <input id="username" placeholder="Tên hiển thị..." />
+      <div id="userChip" class="user-chip">
+        <span class="name">...</span>
+        <span class="role">user</span>
       </div>
     </div>
 
-    <div class="hint">
-      🔁 Mỗi phòng (general/dev/smp/random) có lịch sử riêng. Đổi phòng ở dropdown bên trên.
+    <div class="chat-hint">
+      ✅ Chỉ những người đã được Hebi cấp <b>tên + mã 6 số</b> mới vào được.
+      Không ai tự đổi tên được vì server luôn kiểm tra lại với whitelist.
     </div>
 
     <div id="messages"></div>
 
-    <div class="inputs">
-      <input id="message" class="message-input" placeholder="Nhập tin nhắn và Enter / bấm Gửi" />
-      <button onclick="send()">
-        <span class="icon">📨</span>
-        <span>Gửi</span>
+    <div class="chat-input-row">
+      <input id="message" class="chat-input" placeholder="Nhập tin nhắn và nhấn Enter hoặc Gửi..." />
+      <button class="chat-send-btn" onclick="sendMessage()">
+        📩 Gửi
       </button>
     </div>
   </div>
 
-  <!-- client socket.io được serve từ server -->
   <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-
-    const messages = document.getElementById("messages");
-    const username = document.getElementById("username");
-    const message = document.getElementById("message");
-    const roomSelect = document.getElementById("room");
-
-    function addMessage(msg) {
-      const div = document.createElement("div");
-      div.className = "msg";
-      div.innerHTML = `
-        <div>
-          <span class="user">${msg.username}</span>
-          <span class="room-tag">#${msg.room}</span>
-          <span class="time">${msg.time}</span>
-        </div>
-        <span class="text">${escapeHtml(msg.message)}</span>
-      `;
-      messages.appendChild(div);
-      messages.scrollTop = messages.scrollHeight;
-    }
-
-    function escapeHtml(str) {
-      return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-    }
-
-    // nhận lịch sử khi join / đổi room
-    socket.on("chat-history", (history) => {
-      messages.innerHTML = "";
-      (history || []).forEach(addMessage);
-    });
-
-    // nhận tin mới
-    socket.on("chat-message", addMessage);
-
-    function send() {
-      if (!message.value.trim()) return;
-      socket.emit("chat-message", {
-        username: username.value || "Ẩn danh",
-        message: message.value,
-        room: roomSelect.value
-      });
-      message.value = "";
-      message.focus();
-    }
-
-    message.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") send();
-    });
-
-    // đổi room
-    roomSelect.addEventListener("change", () => {
-      const room = roomSelect.value;
-      messages.innerHTML = "";
-      socket.emit("change-room", room);
-    });
-
-    // auto join room default khi load page
-    window.addEventListener("load", () => {
-      socket.emit("change-room", roomSelect.value);
-    });
-  </script>
+  <script src="/chat.js"></script>
 </body>
 </html>

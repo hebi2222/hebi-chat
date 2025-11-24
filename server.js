@@ -1,129 +1,183 @@
 const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-const path = require("path");
-const fs = require("fs");
-
 const app = express();
-const server = http.createServer(app);
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
+const fs = require("fs");
+const path = require("path");
 
-// Coolify sẽ set PORT=5000, local có thể dùng 3000
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || "0.0.0.0";
 
-// ---- LƯU HISTORY VÀO FILE JSON ----
-const DATA_DIR = path.join(__dirname, "data");
-const HISTORY_FILE = path.join(DATA_DIR, "messages.json");
+const whitelistPath = path.join(__dirname, "data", "whitelist.json");
 
-// roomsHistory: { [roomName]: [ {username, message, time, room} ] }
-let roomsHistory = {};
-
-function loadHistory() {
-  try {
-    if (fs.existsSync(HISTORY_FILE)) {
-      const raw = fs.readFileSync(HISTORY_FILE, "utf-8");
-      roomsHistory = JSON.parse(raw);
-      console.log("📚 Loaded chat history from file.");
-    }
-  } catch (err) {
-    console.error("❌ Failed to load history:", err.message);
-    roomsHistory = {};
-  }
-}
-
-function saveHistory() {
-  try {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
-    }
-    fs.writeFile(
-      HISTORY_FILE,
-      JSON.stringify(roomsHistory, null, 2),
-      (err) => {
-        if (err) console.error("❌ Failed to save history:", err.message);
+// Đảm bảo file whitelist tồn tại
+function ensureWhitelistFile() {
+  if (!fs.existsSync(whitelistPath)) {
+    const initial = {
+      users: {
+        hebi: {
+          code: "220924",
+          role: "admin"
+        }
       }
-    );
-  } catch (err) {
-    console.error("❌ Error while saving history:", err.message);
+    };
+    fs.mkdirSync(path.dirname(whitelistPath), { recursive: true });
+    fs.writeFileSync(whitelistPath, JSON.stringify(initial, null, 2));
   }
 }
 
-loadHistory();
+// Load / Save whitelist
+function loadWhitelist() {
+  ensureWhitelistFile();
+  return JSON.parse(fs.readFileSync(whitelistPath, "utf8"));
+}
 
-// ---- EXPRESS STATIC ----
+function saveWhitelist(data) {
+  fs.writeFileSync(whitelistPath, JSON.stringify(data, null, 2));
+}
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
+// Routes: luôn đi qua login trước
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "login.html"));
 });
 
-io.on("connection", (socket) => {
-  console.log("⚡ User connected:", socket.id);
+app.get("/chat", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
-  // default room
-  let currentRoom = "general";
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin.html"));
+});
 
-  function joinRoom(roomName) {
-    const room = (roomName || "general").trim() || "general";
+// -------------------- API LOGIN --------------------
+app.post("/login", (req, res) => {
+  const { username, code } = req.body;
 
-    // rời room cũ
-    socket.leave(currentRoom);
-    currentRoom = room;
-
-    console.log(`📦 Socket ${socket.id} joined room: ${currentRoom}`);
-    socket.join(currentRoom);
-
-    // gửi lịch sử room hiện tại cho thằng mới vào
-    const history = roomsHistory[currentRoom] || [];
-    socket.emit("chat-history", history);
+  if (!username || !code) {
+    return res.json({ success: false, message: "Thiếu tên hoặc mã!" });
   }
 
-  // join room mặc định khi vừa connect
-  joinRoom(currentRoom);
+  const db = loadWhitelist();
+  const user = db.users[username];
 
-  // client đổi room
-  socket.on("change-room", (roomName) => {
-    joinRoom(roomName);
+  if (!user) {
+    return res.json({ success: false, message: "Tên này chưa được whitelist!" });
+  }
+
+  if (user.code !== code) {
+    return res.json({ success: false, message: "Sai mã whitelist!" });
+  }
+
+  return res.json({
+    success: true,
+    username,
+    role: user.role || "user"
   });
+});
 
-  // nhận message
-  socket.on("chat-message", (data) => {
-    const username = (data.username || "Ẩn danh").trim() || "Ẩn danh";
-    const message = (data.message || "").trim();
+// -------------------- API ADMIN: TẠO USER --------------------
+app.post("/admin/add-user", (req, res) => {
+  const { adminName, adminPass, newUsername } = req.body;
 
-    if (!message) return;
+  if (adminName !== "hebi" || adminPass !== "220924") {
+    return res.json({ success: false, message: "Sai admin name hoặc password!" });
+  }
 
-    const payload = {
-      id: socket.id,
+  if (!newUsername || !newUsername.trim()) {
+    return res.json({ success: false, message: "Tên user không hợp lệ!" });
+  }
+
+  const db = loadWhitelist();
+
+  if (db.users[newUsername]) {
+    return res.json({ success: false, message: "User này đã tồn tại!" });
+  }
+
+  // random mã 6 số
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+  db.users[newUsername] = {
+    code,
+    role: "user"
+  };
+
+  saveWhitelist(db);
+
+  return res.json({
+    success: true,
+    username: newUsername,
+    code
+  });
+});
+
+// -------------------- SOCKET IO CHAT --------------------
+
+// Memory history đơn giản (chung 1 phòng)
+const messages = []; // có thể lưu file sau nếu thích
+
+io.on("connection", (socket) => {
+  console.log("Client connected", socket.id);
+
+  socket.data.user = null;
+
+  // Bước 1: client gửi auth sau khi connect
+  socket.on("auth", ({ username, code }) => {
+    const db = loadWhitelist();
+    const user = db.users[username];
+
+    if (!user || user.code !== code) {
+      socket.emit("auth-failed", { message: "Auth failed, vui lòng login lại." });
+      return;
+    }
+
+    socket.data.user = {
       username,
-      message,
-      room: currentRoom,
-      time: new Date().toLocaleTimeString("vi-VN"),
+      role: user.role || "user"
     };
 
-    // lưu vào history theo room
-    if (!roomsHistory[currentRoom]) {
-      roomsHistory[currentRoom] = [];
-    }
-    roomsHistory[currentRoom].push(payload);
+    socket.emit("auth-ok", {
+      username,
+      role: socket.data.user.role
+    });
 
-    // giữ tối đa 100 tin / room
-    if (roomsHistory[currentRoom].length > 100) {
-      roomsHistory[currentRoom].shift();
-    }
+    // gửi history khi join
+    socket.emit("chat-history", messages);
+  });
 
-    saveHistory();
+  // Nhận tin nhắn chat
+  socket.on("chat-message", ({ text }) => {
+    if (!socket.data.user) return; // chưa auth thì bỏ
 
-    // chỉ broadcast trong room hiện tại
-    io.to(currentRoom).emit("chat-message", payload);
+    const trimmed = (text || "").trim();
+    if (!trimmed) return;
+
+    const msg = {
+      username: socket.data.user.username,
+      role: socket.data.user.role,
+      time: new Date().toLocaleTimeString("vi-VN", {
+        hour: "2-digit",
+        minute: "2-digit"
+      }),
+      text: trimmed
+    };
+
+    messages.push(msg);
+    if (messages.length > 200) messages.shift(); // giữ lịch sử 200 msg
+
+    io.emit("chat-message", msg);
   });
 
   socket.on("disconnect", () => {
-    console.log("❌ User disconnected:", socket.id);
+    console.log("Client disconnected", socket.id);
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`🚀 Hebi Chat Server running on port ${PORT}`);
+// Start
+http.listen(PORT, HOST, () => {
+  console.log(`Hebi Chat server running at http://${HOST}:${PORT}`);
 });

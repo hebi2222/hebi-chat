@@ -1,12 +1,13 @@
 {
   "name": "hebi-chat",
   "version": "1.0.0",
+  "description": "Simple realtime chat with whitelist + admin panel for Hebi",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.21.0",
-    "socket.io": "^4.8.0"
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
   }
 }
