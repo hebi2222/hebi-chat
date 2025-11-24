@@ -25,7 +25,10 @@ const HOST = process.env.HOST || "0.0.0.0";
 
 const whitelistPath = path.join(__dirname, "data", "whitelist.json");
 
-// Đảm bảo file whitelist tồn tại
+// ================= WHITELIST CACHE 6 TIẾNG =================
+
+let whitelistCache = null; // { data, loadedAt }
+
 function ensureWhitelistFile() {
   if (!fs.existsSync(whitelistPath)) {
     const initial = {
@@ -41,22 +44,46 @@ function ensureWhitelistFile() {
   }
 }
 
-// Load / Save whitelist
-function loadWhitelist() {
+function loadWhitelistRaw() {
   ensureWhitelistFile();
   return JSON.parse(fs.readFileSync(whitelistPath, "utf8"));
 }
 
-function saveWhitelist(data) {
-  fs.writeFileSync(whitelistPath, JSON.stringify(data, null, 2));
+// Load whitelist nhưng có cache 6h
+function getWhitelistCached() {
+  const SIX_HOURS = 6 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  if (!whitelistCache || now - whitelistCache.loadedAt > SIX_HOURS) {
+    const data = loadWhitelistRaw();
+    whitelistCache = {
+      data,
+      loadedAt: now,
+    };
+    console.log("[WHITELIST] Reload từ file (hết cache hoặc lần đầu).");
+  }
+
+  return whitelistCache.data;
 }
 
-// Middleware
+// Save + update cache luôn
+function saveWhitelist(newData) {
+  fs.writeFileSync(whitelistPath, JSON.stringify(newData, null, 2));
+  whitelistCache = {
+    data: newData,
+    loadedAt: Date.now(),
+  };
+  console.log("[WHITELIST] Đã lưu file & update cache.");
+}
+
+// ================= MIDDLEWARE & ROUTES =================
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Routes: luôn đi qua login trước
+// 👉 Trang root: cho Hebi tự thiết kế landing (chọn Admin/User)
+// Tạm thời trỏ về login luôn, sau này Hebi làm file home.html thì đổi route này
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login.html"));
 });
@@ -69,7 +96,8 @@ app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
 
-// -------------------- API LOGIN --------------------
+// ================= API LOGIN =================
+
 app.post("/login", (req, res) => {
   const { username, code } = req.body;
 
@@ -77,7 +105,7 @@ app.post("/login", (req, res) => {
     return res.json({ success: false, message: "Thiếu tên hoặc mã!" });
   }
 
-  const db = loadWhitelist();
+  const db = getWhitelistCached();
   const user = db.users[username];
 
   if (!user) {
@@ -95,7 +123,8 @@ app.post("/login", (req, res) => {
   });
 });
 
-// -------------------- API ADMIN: TẠO USER --------------------
+// ================= API ADMIN: TẠO USER MỚI =================
+
 app.post("/admin/add-user", (req, res) => {
   const { adminName, adminPass, newUsername } = req.body;
 
@@ -108,7 +137,7 @@ app.post("/admin/add-user", (req, res) => {
     return res.json({ success: false, message: "Tên user không hợp lệ!" });
   }
 
-  const db = loadWhitelist();
+  const db = getWhitelistCached();
 
   if (db.users[newUsername]) {
     return res.json({ success: false, message: "User này đã tồn tại!" });
@@ -131,19 +160,19 @@ app.post("/admin/add-user", (req, res) => {
   });
 });
 
-// -------------------- SOCKET.IO CHAT --------------------
+// ================= SOCKET.IO CHAT =================
 
 // Memory history đơn giản (chung 1 phòng)
-const messages = []; // muốn thì sau này lưu file tiếp
+const messages = []; // sau này muốn thì lưu file tiếp
 
 io.on("connection", (socket) => {
   console.log("Client connected", socket.id);
 
   socket.data.user = null;
 
-  // Bước 1: client gửi auth sau khi connect
+  // Client sẽ emit "auth" 1 lần sau khi connect
   socket.on("auth", ({ username, code }) => {
-    const db = loadWhitelist();
+    const db = getWhitelistCached();
     const user = db.users[username];
 
     if (!user || user.code !== code) {
@@ -161,7 +190,7 @@ io.on("connection", (socket) => {
       role: socket.data.user.role,
     });
 
-    // gửi history khi join
+    // Gửi history cho user vừa join
     socket.emit("chat-history", messages);
   });
 
@@ -193,7 +222,8 @@ io.on("connection", (socket) => {
   });
 });
 
-// Start server
+// ================= START SERVER =================
+
 server.listen(PORT, HOST, () => {
   console.log(`Hebi Chat server running at http://${HOST}:${PORT}`);
 });
