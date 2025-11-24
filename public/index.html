@@ -16,7 +16,7 @@
     }
     .chat-box {
       width: 95%;
-      max-width: 600px;
+      max-width: 700px;
       background:#0f172a;
       border-radius:16px;
       padding:16px;
@@ -25,6 +25,30 @@
       gap:10px;
       box-shadow:0 20px 40px rgba(0,0,0,0.5);
     }
+    .top-row {
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .top-row h2 {
+      margin-right:auto;
+      color:#a855f7;
+    }
+    .top-row select,
+    .top-row input {
+      padding:6px 8px;
+      border-radius:8px;
+      border:none;
+      background:#020617;
+      color:white;
+      font-size:13px;
+    }
+    .top-row label {
+      font-size:13px;
+      color:#cbd5f5;
+    }
+
     #messages {
       flex:1;
       background:#020617;
@@ -38,8 +62,13 @@
     .user { font-weight:600; color:#38bdf8; }
     .time { font-size:11px; color:#64748b; margin-left:4px; }
     .text { margin-left:6px; }
-    .inputs { display:flex; gap:8px; margin-top:8px; }
-    input {
+
+    .inputs {
+      display:flex;
+      gap:8px;
+      margin-top:8px;
+    }
+    input.message-input {
       padding:8px;
       border-radius:8px;
       border:none;
@@ -47,7 +76,9 @@
       color:white;
       flex:1;
     }
-    #username { width:30%; }
+    #username {
+      width:28%;
+    }
     button {
       background:#a855f7;
       border:none;
@@ -55,17 +86,41 @@
       border-radius:8px;
       color:white;
       cursor:pointer;
+      white-space:nowrap;
+    }
+    button:hover {
+      opacity:0.9;
+    }
+    .hint {
+      font-size:11px;
+      color:#94a3b8;
     }
   </style>
 </head>
 <body>
   <div class="chat-box">
-    <h2 style="color:#a855f7;">💬 Hebi Chat Realtime</h2>
-    <div id="messages"></div>
-    
-    <div class="inputs">
+    <div class="top-row">
+      <h2>💬 Hebi Chat Realtime</h2>
+
+      <label for="room">Phòng:</label>
+      <select id="room">
+        <option value="general">general</option>
+        <option value="dev">dev</option>
+        <option value="smp">smp</option>
+        <option value="random">random</option>
+      </select>
+
       <input id="username" placeholder="Tên..." />
-      <input id="message" placeholder="Tin nhắn..." />
+    </div>
+
+    <div class="hint">
+      🔁 Đổi phòng = chọn ở dropdown. Mỗi phòng có lịch sử riêng.
+    </div>
+
+    <div id="messages"></div>
+
+    <div class="inputs">
+      <input id="message" class="message-input" placeholder="Tin nhắn..." />
       <button onclick="send()">Gửi</button>
     </div>
   </div>
@@ -78,12 +133,13 @@
     const messages = document.getElementById("messages");
     const username = document.getElementById("username");
     const message = document.getElementById("message");
+    const roomSelect = document.getElementById("room");
 
     function addMessage(msg) {
       const div = document.createElement("div");
       div.className = "msg";
       div.innerHTML = `
-        <span class="user">${msg.username}</span>
+        <span class="user">[${msg.room}] ${msg.username}</span>
         <span class="time">${msg.time}</span>
         <span class="text">${msg.message}</span>
       `;
@@ -91,19 +147,39 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
+    // nhận lịch sử khi join / đổi room
+    socket.on("chat-history", (history) => {
+      messages.innerHTML = "";
+      (history || []).forEach(addMessage);
+    });
+
+    // nhận tin mới
     socket.on("chat-message", addMessage);
 
     function send() {
       if (!message.value.trim()) return;
       socket.emit("chat-message", {
         username: username.value || "Ẩn danh",
-        message: message.value
+        message: message.value,
+        room: roomSelect.value
       });
       message.value = "";
     }
 
-    message.addEventListener("keydown", e => {
+    message.addEventListener("keydown", (e) => {
       if (e.key === "Enter") send();
+    });
+
+    // đổi room
+    roomSelect.addEventListener("change", () => {
+      const room = roomSelect.value;
+      messages.innerHTML = "";
+      socket.emit("change-room", room);
+    });
+
+    // auto join room default khi load page
+    window.addEventListener("load", () => {
+      socket.emit("change-room", roomSelect.value);
     });
   </script>
 </body>
