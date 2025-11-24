@@ -1,330 +1,376 @@
+/* ============ RESET CƠ BẢN ============ */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
 }
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top, #1d2540, #020617 55%);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: radial-gradient(circle at top, #020617 0, #020617 40%, #000 100%);
   color: #e5e7eb;
-  min-height: 100vh;
-}
-
-/* ---------- AUTH (login + admin) ---------- */
-
-.auth-body {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: center;   /* canh giữa ngang */
+  align-items: flex-start;   /* dính lên trên, không giữa dọc nữa */
   padding: 16px;
 }
 
-.auth-card {
+/* ============ KHUNG APP CHÍNH ============ */
+.app {
   width: 100%;
-  max-width: 400px;
-  background: #020617;
-  border-radius: 16px;
-  padding: 20px 18px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.auth-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #a855f7;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.auth-sub {
-  font-size: 13px;
-  color: #9ca3af;
-}
-
-.auth-label {
-  font-size: 13px;
-  color: #cbd5f5;
-  margin-bottom: 4px;
-}
-
-.auth-input {
-  width: 100%;
-  padding: 9px 11px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-  background: #020617;
-  color: #e5e7eb;
-  border: 1px solid #1f2937;
-  font-size: 14px;
-}
-
-.auth-input:focus {
-  border-color: #a855f7;
-  box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.4);
-}
-
-.auth-btn {
-  margin-top: 6px;
-  width: 100%;
-  padding: 9px 12px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  background: linear-gradient(90deg, #a855f7, #6366f1);
-  color: #f9fafb;
-  font-size: 14px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.auth-btn:active {
-  transform: scale(0.98);
-}
-
-.auth-msg {
-  min-height: 18px;
-  font-size: 13px;
-  margin-top: 4px;
-}
-
-.auth-msg.error {
-  color: #f97373;
-}
-
-.auth-msg.success {
-  color: #4ade80;
-}
-
-.link-small {
-  font-size: 12px;
-  color: #93c5fd;
-  text-decoration: none;
-}
-.link-small:hover {
-  text-decoration: underline;
-}
-
-/* ---------- CHAT LAYOUT ---------- */
-
-.chat-body {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
-  padding: 12px;
-}
-
-.chat-wrapper {
-  width: 100%;
-  max-width: 900px;
-  background: #020617;
+  max-width: 960px;
+  min-height: calc(100vh - 32px); /* bớt nhảy so với 100vh */
+  background: radial-gradient(circle at top left, #111827 0, #020617 55%);
   border-radius: 18px;
-  padding: 14px;
+  border: 1px solid #1f2937;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
+  padding: 14px 16px 18px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(148, 163, 184, 0.4);
 }
 
-/* Top bar */
-
-.chat-top {
+/* ============ HEADER CHAT ============ */
+.chat-header {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
   align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
 }
 
 .chat-title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-right: auto;
-  color: #a855f7;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
-.chat-title h2 {
-  font-size: 20px;
+.chat-title-icon {
+  font-size: 14px;
 }
 
-.badge {
-  font-size: 10px;
-  padding: 2px 6px;
+.chat-title-main {
+  color: #f9fafb;
+}
+
+.chat-title-badge {
+  font-size: 11px;
+  padding: 1px 6px;
   border-radius: 999px;
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  border: 1px solid #22c55e33;
+  color: #22c55e;
+  background: #022c22;
 }
 
-.user-chip {
-  font-size: 13px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: #0b1120;
-  border: 1px solid rgba(148, 163, 184, 0.6);
+.header-right {
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-
-.user-chip span.name {
-  font-weight: 600;
-  color: #e5e7eb;
-}
-
-.user-chip span.role {
-  font-size: 11px;
-  padding: 1px 5px;
-  border-radius: 999px;
-  background: rgba(168, 85, 247, 0.2);
-  color: #e9d5ff;
-}
-
-/* Hint */
-
-.chat-hint {
+  gap: 8px;
   font-size: 12px;
   color: #9ca3af;
 }
 
-/* Messages */
-
-#messages {
-  flex: 1;
-  margin-top: 4px;
-  padding: 10px;
-  border-radius: 12px;
+/* Nhãn user / admin góc phải */
+.user-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid #4b5563;
   background: #020617;
-  border: 1px solid #1f2937;
-  overflow-y: auto;
-  max-height: 70vh;
-  font-size: 14px;
+  font-size: 11px;
 }
 
-.msg {
-  margin-bottom: 8px;
-  padding: 6px 8px;
-  border-radius: 10px;
-  background: rgba(15, 23, 42, 0.95);
+/* ============ DÒNG TRẠNG THÁI WHITELIST ============ */
+.status-line {
+  font-size: 11px;
+  color: #9ca3af;
+  padding-left: 2px;
+  margin-bottom: 4px;
 }
 
-.msg-header {
+/* ============ KHUNG CHÍNH: CHAT + SIDEBAR ============ */
+.main-layout {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  gap: 10px;
+  min-height: 0; /* fix scroll nhảy */
 }
 
-.msg-user {
+/* bên trái: khung chat */
+.chat-panel {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  border: 1px solid #1f2937;
+  background: radial-gradient(circle at top left, #020617 0, #020617 60%, #000 100%);
+  padding: 8px;
+  min-height: 420px;
+}
+
+/* bên phải (nếu có) – list room, user, admin panel */
+.side-panel {
+  width: 220px;
+  max-width: 35%;
+  border-radius: 14px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+
+/* ============ KHUNG TIN NHẮN ============ */
+#messages {
+  flex: 1 1 auto;
+  background: #020617;
+  border-radius: 12px;
+  padding: 8px;
+  overflow-y: auto;
+  font-size: 13px;
+  border: 1px solid #111827;
+}
+
+/* thanh cuộn dịu dịu */
+#messages::-webkit-scrollbar {
+  width: 6px;
+}
+#messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+#messages::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 999px;
+}
+
+/* tin nhắn */
+.message {
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.message .meta {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-right: 4px;
+}
+
+.message .name {
   font-weight: 600;
   color: #38bdf8;
 }
 
-.msg-role {
+.message.me .name {
+  color: #a855f7;
+}
+
+.message .time {
   font-size: 11px;
-  padding: 1px 5px;
-  border-radius: 999px;
-  background: rgba(234, 179, 8, 0.12);
-  color: #fbbf24;
+  color: #6b7280;
 }
 
-.msg-time {
+.message .text {
+  font-size: 13px;
+}
+
+.message.system {
   font-size: 11px;
-  color: #64748b;
-  margin-left: auto;
+  color: #9ca3af;
+  font-style: italic;
 }
 
-.msg-text {
-  margin-top: 2px;
-  color: #e2e8f0;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-/* Input row */
-
-.chat-input-row {
-  margin-top: 6px;
+/* ============ INPUT GỬI TIN NHẮN ============ */
+.input-row {
+  margin-top: 8px;
   display: flex;
   gap: 8px;
 }
 
-.chat-input {
-  flex: 1;
-  padding: 9px 11px;
+.input-row input[type="text"],
+.input-row input[type="password"] {
+  flex: 1 1 auto;
+  padding: 8px 10px;
   border-radius: 999px;
-  border: none;
+  border: 1px solid #1f2937;
   background: #020617;
   color: #e5e7eb;
-  border: 1px solid #1f2937;
+  font-size: 13px;
   outline: none;
-  font-size: 14px;
 }
 
-.chat-input:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.4);
+.input-row input::placeholder {
+  color: #6b7280;
 }
 
-.chat-send-btn {
-  padding: 9px 14px;
+/* nút gửi */
+.btn-primary {
   border-radius: 999px;
   border: none;
-  background: #a855f7;
-  color: #f9fafb;
-  cursor: pointer;
-  font-size: 14px;
+  padding: 0 16px;
+  font-size: 13px;
   font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  color: #fff;
+  cursor: pointer;
   white-space: nowrap;
+  height: 34px;
 }
 
-.chat-send-btn:active {
-  transform: scale(0.98);
+/* state disabled */
+button:disabled,
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
-/* Responsive */
+/* ============ FORM LOGIN / MODAL ============ */
 
-@media (max-width: 768px) {
-  .chat-body {
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.76);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background: #020617;
+  border-radius: 16px;
+  border: 1px solid #1f2937;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  padding: 18px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.login-sub {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-form label {
+  font-size: 12px;
+  color: #d1d5db;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  color: #e5e7eb;
+  font-size: 13px;
+  outline: none;
+}
+
+.login-actions {
+  margin-top: 4px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* nút phụ */
+.btn-ghost {
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background: transparent;
+  color: #e5e7eb;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* ============ SIDE PANEL NẾU DÙNG ============ */
+.side-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  margin-bottom: 2px;
+}
+
+.side-list {
+  background: #020617;
+  border-radius: 10px;
+  border: 1px solid #111827;
+  padding: 6px;
+  max-height: 170px;
+  overflow-y: auto;
+  font-size: 12px;
+}
+
+/* ============ RESPONSIVE MOBILE ============ */
+
+@media (max-width: 900px) {
+  body {
     padding: 8px;
   }
 
-  .chat-wrapper {
-    height: calc(100vh - 16px);
-    padding: 12px;
+  .app {
+    padding: 10px;
+    min-height: calc(100vh - 16px);
+  }
+
+  .main-layout {
+    flex-direction: column;
+  }
+
+  .side-panel {
+    width: 100%;
+    max-width: 100%;
+    order: -1; /* panel phụ lên trên nếu muốn */
   }
 
   #messages {
-    max-height: none;
+    max-height: 55vh;
   }
 }
 
-@media (max-width: 480px) {
-  .chat-top {
+@media (max-width: 600px) {
+  .chat-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 2px;
   }
 
-  .chat-input-row {
-    flex-direction: column;
+  .input-row {
+    flex-direction: row;
   }
 
-  .chat-send-btn {
-    justify-content: center;
-    width: 100%;
+  .btn-primary {
+    padding: 0 12px;
+    font-size: 12px;
+  }
+
+  .login-card {
+    margin: 0 8px;
   }
 }
