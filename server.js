@@ -1,9 +1,24 @@
+// server.js
+
 const express = require("express");
-const app = express();
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
+const http = require("http");
+const { Server } = require("socket.io");
 const fs = require("fs");
 const path = require("path");
+
+const app = express();
+const server = http.createServer(app);
+
+// Socket.IO config: chống rớt khi đi Cloudflare
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+  pingInterval: 25000, // 25s gửi heartbeat
+  pingTimeout: 60000,  // 60s mới timeout → đỡ disconnect
+  transports: ["websocket", "polling"],
+});
 
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || "0.0.0.0";
@@ -16,10 +31,10 @@ function ensureWhitelistFile() {
     const initial = {
       users: {
         hebi: {
-          code: "220924",
-          role: "admin"
-        }
-      }
+          code: "220924", // admin mặc định
+          role: "admin",
+        },
+      },
     };
     fs.mkdirSync(path.dirname(whitelistPath), { recursive: true });
     fs.writeFileSync(whitelistPath, JSON.stringify(initial, null, 2));
@@ -76,7 +91,7 @@ app.post("/login", (req, res) => {
   return res.json({
     success: true,
     username,
-    role: user.role || "user"
+    role: user.role || "user",
   });
 });
 
@@ -84,6 +99,7 @@ app.post("/login", (req, res) => {
 app.post("/admin/add-user", (req, res) => {
   const { adminName, adminPass, newUsername } = req.body;
 
+  // Admin cố định: hebi / 220924
   if (adminName !== "hebi" || adminPass !== "220924") {
     return res.json({ success: false, message: "Sai admin name hoặc password!" });
   }
@@ -103,7 +119,7 @@ app.post("/admin/add-user", (req, res) => {
 
   db.users[newUsername] = {
     code,
-    role: "user"
+    role: "user",
   };
 
   saveWhitelist(db);
@@ -111,14 +127,14 @@ app.post("/admin/add-user", (req, res) => {
   return res.json({
     success: true,
     username: newUsername,
-    code
+    code,
   });
 });
 
-// -------------------- SOCKET IO CHAT --------------------
+// -------------------- SOCKET.IO CHAT --------------------
 
 // Memory history đơn giản (chung 1 phòng)
-const messages = []; // có thể lưu file sau nếu thích
+const messages = []; // muốn thì sau này lưu file tiếp
 
 io.on("connection", (socket) => {
   console.log("Client connected", socket.id);
@@ -137,12 +153,12 @@ io.on("connection", (socket) => {
 
     socket.data.user = {
       username,
-      role: user.role || "user"
+      role: user.role || "user",
     };
 
     socket.emit("auth-ok", {
       username,
-      role: socket.data.user.role
+      role: socket.data.user.role,
     });
 
     // gửi history khi join
@@ -161,9 +177,9 @@ io.on("connection", (socket) => {
       role: socket.data.user.role,
       time: new Date().toLocaleTimeString("vi-VN", {
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
       }),
-      text: trimmed
+      text: trimmed,
     };
 
     messages.push(msg);
@@ -177,7 +193,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// Start
-http.listen(PORT, HOST, () => {
+// Start server
+server.listen(PORT, HOST, () => {
   console.log(`Hebi Chat server running at http://${HOST}:${PORT}`);
 });
