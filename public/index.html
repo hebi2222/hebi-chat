@@ -1,53 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Hebi Chat</title>
-    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-    <style>
-        body { background:#111; color:#fff; font-family:Arial; }
-        #chat { width:400px; margin:40px auto; }
-        #msgs { height:300px; overflow-y:auto; border:1px solid #444; padding:10px; }
-        input { width:100%; padding:10px; margin-top:10px; }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Hebi Chat</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background:#050816;
+      color:white;
+      font-family:system-ui;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
+    .chat-box {
+      width: 95%;
+      max-width: 600px;
+      background:#0f172a;
+      border-radius:16px;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      box-shadow:0 20px 40px rgba(0,0,0,0.5);
+    }
+    #messages {
+      flex:1;
+      background:#020617;
+      padding:10px;
+      border-radius:10px;
+      overflow-y:auto;
+      height:350px;
+      font-size:14px;
+    }
+    .msg { margin-bottom:8px; }
+    .user { font-weight:600; color:#38bdf8; }
+    .time { font-size:11px; color:#64748b; margin-left:4px; }
+    .text { margin-left:6px; }
+    .inputs { display:flex; gap:8px; margin-top:8px; }
+    input {
+      padding:8px;
+      border-radius:8px;
+      border:none;
+      background:#020617;
+      color:white;
+      flex:1;
+    }
+    #username { width:30%; }
+    button {
+      background:#a855f7;
+      border:none;
+      padding:8px 14px;
+      border-radius:8px;
+      color:white;
+      cursor:pointer;
+    }
+  </style>
 </head>
 <body>
-    <div id="chat">
-        <h2>💬 Hebi Chat</h2>
-        <div id="msgs"></div>
-        <input id="msgInput" type="text" placeholder="Nhắn gì đó..." />
+  <div class="chat-box">
+    <h2 style="color:#a855f7;">💬 Hebi Chat Realtime</h2>
+    <div id="messages"></div>
+    
+    <div class="inputs">
+      <input id="username" placeholder="Tên..." />
+      <input id="message" placeholder="Tin nhắn..." />
+      <button onclick="send()">Gửi</button>
     </div>
+  </div>
 
-    <script>
-        // kết nối soketi/pusher
-        Pusher.logToConsole = false;
+  <!-- client socket.io được serve từ server -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
 
-        const pusher = new Pusher("app-key", {
-            cluster: "mt1",
-            wsHost: "chat.hebi222.top",
-            wsPort: 6001,
-            forceTLS: false,
-            enabledTransports: ["ws"],
-        });
+    const messages = document.getElementById("messages");
+    const username = document.getElementById("username");
+    const message = document.getElementById("message");
 
-        const channel = pusher.subscribe("chat");
+    function addMessage(msg) {
+      const div = document.createElement("div");
+      div.className = "msg";
+      div.innerHTML = `
+        <span class="user">${msg.username}</span>
+        <span class="time">${msg.time}</span>
+        <span class="text">${msg.message}</span>
+      `;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
 
-        channel.bind("message", function(data) {
-            const box = document.getElementById("msgs");
-            box.innerHTML += `<div>🐍 ${data.text}</div>`;
-            box.scrollTop = box.scrollHeight;
-        });
+    socket.on("chat-message", addMessage);
 
-        document.getElementById("msgInput").addEventListener("keypress", function(e) {
-            if (e.key === "Enter") {
-                fetch("/emit", {
-                    method:"POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ text: this.value })
-                });
-                this.value = "";
-            }
-        });
-    </script>
+    function send() {
+      if (!message.value.trim()) return;
+      socket.emit("chat-message", {
+        username: username.value || "Ẩn danh",
+        message: message.value
+      });
+      message.value = "";
+    }
+
+    message.addEventListener("keydown", e => {
+      if (e.key === "Enter") send();
+    });
+  </script>
 </body>
 </html>
