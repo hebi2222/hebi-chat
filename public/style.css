@@ -728,32 +728,56 @@ body.is-user .room-tab-admin {
   }
 }
 
-/* Mobile nhỏ */
-@media (max-width: 720px) {
-  .chat-body {
-    padding: 10px 0;
-  }
+/* ============ MOBILE FIX ============ */
+@media (max-width: 900px) {
 
-  .chat-wrapper {
-    border-radius: 0;
-  }
-
-  .messages {
-    height: 260px;
-  }
-
+  /* sidebar mặc định ẩn */
   .sidebar-left,
   .sidebar-right {
-    top: 8px;
-    bottom: 8px;
-    transform: translateX(-110%);
-    height: auto;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 85%;
+    max-width: 85%;
+    background: #0f101a;
+    z-index: 9999;
+    padding-top: 60px; /* chừa chỗ header */
+    transition: transform 0.25s ease;
+    border-radius: 0 20px 20px 0;
   }
 
-  body.show-admin #adminSidebar,
-  body.show-presence #presenceSidebar {
-    top: 8px;
-    bottom: 8px;
+  /* trái ẩn bên trái */
+  .sidebar-left {
+    left: 0;
+    transform: translateX(-100%);
+  }
+
+  /* phải ẩn bên phải */
+  .sidebar-right {
+    right: 0;
+    transform: translateX(100%);
+    border-radius: 20px 0 0 20px;
+  }
+
+  /* Khi bật */
+  body.show-left .sidebar-left {
     transform: translateX(0);
   }
+
+  body.show-right .sidebar-right {
+    transform: translateX(0);
+  }
+
+  /* chat chính full màn hình */
+  .chat-center {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* header có 2 nút toggle */
+  .mobile-toggle-left,
+  .mobile-toggle-right {
+    display: inline-flex !important;
+  }
 }
+
