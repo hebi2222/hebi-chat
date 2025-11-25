@@ -676,51 +676,59 @@ body.is-user .room-tab-admin {
 
 /* ===== RESPONSIVE / AUTO-HIDE SIDEBARS ===== */
 
-/* Laptop & mobile: sidebars overlay, chat ở giữa */
+/* Laptop & mobile: chat ở giữa, sidebar dạng overlay trượt vào */
 @media (max-width: 1399px) {
   .chat-wrapper {
     max-width: 100%;
   }
 
   .chat-layout {
-    display: block; /* chỉ chat-main trong flow */
+    display: block; /* chỉ còn chat-main trong flow */
   }
 
   .chat-main {
     margin: 0 auto;
   }
 
+  /* hiện nút toggle ở header */
   .hide-desktop {
     display: inline-flex;
   }
 
+  /* sidebar dạng panel trượt */
   .sidebar-left,
   .sidebar-right {
     position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 280px;
-    max-width: 90vw;
-    z-index: 50;
-    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8);
+    top: 0;
+    bottom: 0;
+    width: 85%;
+    max-width: 85%;
+    z-index: 9999;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.9);
+    background: #0f101a;
+    padding-top: 60px; /* chừa chỗ header */
+    transition: transform 0.25s ease;
   }
 
   .sidebar-left {
-    left: 10px;
-    transform: translateY(-50%) translateX(-110%);
+    left: 0;
+    border-radius: 0 18px 18px 0;
+    transform: translateX(-100%);
   }
 
   .sidebar-right {
-    right: 10px;
-    transform: translateY(-50%) translateX(110%);
+    right: 0;
+    border-radius: 18px 0 0 18px;
+    transform: translateX(100%);
   }
 
+  /* Khi bấm nút mở */
   body.show-admin #adminSidebar {
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(0);
   }
 
   body.show-presence #presenceSidebar {
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(0);
   }
 
   .messages {
@@ -728,7 +736,7 @@ body.is-user .room-tab-admin {
   }
 }
 
-/* Mobile nhỏ */
+/* Mobile nhỏ hơn nữa: full màn hình, bỏ bo góc */
 @media (max-width: 720px) {
   .chat-body {
     padding: 10px 0;
@@ -744,16 +752,8 @@ body.is-user .room-tab-admin {
 
   .sidebar-left,
   .sidebar-right {
-    top: 8px;
-    bottom: 8px;
-    transform: translateX(-110%);
-    height: auto;
-  }
-
-  body.show-admin #adminSidebar,
-  body.show-presence #presenceSidebar {
-    top: 8px;
-    bottom: 8px;
-    transform: translateX(0);
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
   }
 }
