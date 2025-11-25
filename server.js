@@ -249,8 +249,9 @@ io.on("connection", (socket) => {
       role: socket.data.user.role,
       room,
       time: new Date().toLocaleTimeString("vi-VN", {
+        timeZone: "Asia/Ho_Chi_Minh",
         hour: "2-digit",
-        minute: "2-digit",
+        minute: "2-digit"
       }),
       text: trimmed,
     };
