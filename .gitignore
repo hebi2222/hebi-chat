@@ -1,0 +1,46 @@
+# ======================================
+#  NODE.JS / HEBI-CHAT GITIGNORE
+# ======================================
+
+# Node modules
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+*.log
+
+# Build / Cache
+dist/
+build/
+.cache/
+.temp/
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Coolify volumes (local machine)
+data/
+data/*
+
+# Ignore whitelist + database runtime
+data/whitelist.json
+/data/whitelist.json
+/data/chat
+/data/chat/*
+
+# Prevent VSCode junk
+.vscode/
+.idea/
+
+# OS junk
+*.swp
+*.tmp
