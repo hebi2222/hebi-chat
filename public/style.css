@@ -676,7 +676,7 @@ body.is-user .room-tab-admin {
 
 /* ===== RESPONSIVE / AUTO-HIDE SIDEBARS ===== */
 
-/* Laptop & mobile: chat ở giữa, sidebar dạng overlay trượt vào */
+/* Laptop / tablet: chat ở giữa, sidebar overlay trượt (hẹp hơn) */
 @media (max-width: 1399px) {
   .chat-wrapper {
     max-width: 100%;
@@ -701,8 +701,8 @@ body.is-user .room-tab-admin {
     position: fixed;
     top: 0;
     bottom: 0;
-    width: 85%;
-    max-width: 85%;
+    width: 72%;
+    max-width: 72%;
     z-index: 9999;
     box-shadow: 0 18px 45px rgba(0, 0, 0, 0.9);
     background: #0f101a;
@@ -736,7 +736,7 @@ body.is-user .room-tab-admin {
   }
 }
 
-/* Mobile nhỏ hơn nữa: full màn hình, bỏ bo góc */
+/* MOBILE THẬT SỰ: xếp dọc, KHÔNG overlay, chỉ kéo xuống */
 @media (max-width: 720px) {
   .chat-body {
     padding: 10px 0;
@@ -746,14 +746,33 @@ body.is-user .room-tab-admin {
     border-radius: 0;
   }
 
-  .messages {
-    height: 260px;
+  /* xếp dọc: trái -> giữa -> phải */
+  .chat-layout {
+    display: block;
   }
 
   .sidebar-left,
   .sidebar-right {
+    position: static;
     width: 100%;
     max-width: 100%;
-    border-radius: 0;
+    box-shadow: none;
+    padding-top: 10px;
+    border-radius: 14px;
+    transform: none !important;
+  }
+
+  .chat-main {
+    margin-top: 10px;
+  }
+
+  /* Ẩn nút toggle vì không cần overlay nữa */
+  .hide-desktop {
+    display: none;
+  }
+
+  /* phòng chat thấp hơn chút cho đỡ chật */
+  .messages {
+    height: 260px;
   }
 }
