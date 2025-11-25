@@ -1,376 +1,759 @@
-/* ============ RESET CƠ BẢN ============ */
+:root {
+  --bg-main: #111217;
+  --bg-panel: #181925;
+  --bg-panel-soft: #1e2030;
+  --accent: #b58cff; /* tím nhẹ */
+  --accent-soft: rgba(181, 140, 255, 0.18);
+  --text-main: #f5f5ff;
+  --text-muted: #a3a6b8;
+  --border-subtle: #26283a;
+}
+
+/* ===== GLOBAL ===== */
+
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100%;
-}
-
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  background: radial-gradient(circle at top, #020617 0, #020617 40%, #000 100%);
-  color: #e5e7eb;
-  display: flex;
-  justify-content: center;   /* canh giữa ngang */
-  align-items: flex-start;   /* dính lên trên, không giữa dọc nữa */
-  padding: 16px;
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, #2a2140 0, #111217 55%);
+  color: var(--text-main);
 }
 
-/* ============ KHUNG APP CHÍNH ============ */
-.app {
+/* ===== LOGIN ===== */
+
+.login-body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-box {
+  background: var(--bg-panel);
+  padding: 24px 22px 26px;
+  border-radius: 14px;
+  width: 320px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--border-subtle);
+}
+
+.login-box h2 {
+  margin: 0 0 16px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 9px 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: #10111a;
+  color: var(--text-main);
+}
+
+.login-box input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-soft);
+}
+
+.login-box button {
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: #100b18;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-box button:hover {
+  filter: brightness(1.05);
+}
+
+.login-box .hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ===== CHAT LAYOUT CHUNG ===== */
+
+.chat-body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 10px;
+}
+
+.chat-wrapper {
   width: 100%;
   max-width: 960px;
-  min-height: calc(100vh - 32px); /* bớt nhảy so với 100vh */
-  background: radial-gradient(circle at top left, #111827 0, #020617 55%);
+  background: var(--bg-panel);
   border-radius: 18px;
-  border: 1px solid #1f2937;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
-  padding: 14px 16px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  padding: 16px 16px 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+  border: 1px solid var(--border-subtle);
 }
 
-/* ============ HEADER CHAT ============ */
-.chat-header {
+/* DESKTOP ≥ 1400px: 3 cột full */
+.chat-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1.9fr) 220px;
+  gap: 12px;
+}
+
+.sidebar {
+  background: #151627;
+  border-radius: 14px;
+  padding: 10px 10px 9px;
+  border: 1px solid #24263a;
+}
+
+.sidebar-left {
+  background: #17182a;
+}
+
+.sidebar-right {
+  background: #161727;
+}
+
+.chat-main {
+  background: #10111a;
+  border-radius: 14px;
+  padding: 12px 12px 10px;
+  border: 1px solid #24263a;
+}
+
+/* top */
+
+.chat-top {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 4px;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
-.chat-title {
+.chat-top-left,
+.chat-top-right {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+}
+
+.chat-top h2 {
+  margin: 0;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* buttons toggle sidebar (màn nhỏ) */
+
+.icon-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 5px 8px;
+  background: #201637;
+  color: var(--text-main);
+  cursor: pointer;
   font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  background: #2a1f4a;
+}
+
+.hide-desktop {
+  display: none; /* mặc định ẩn trên desktop */
+}
+
+/* user chip */
+
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #141521;
+  border: 1px solid #242635;
+  margin-bottom: 8px;
+}
+
+.user-chip .name {
   font-weight: 600;
 }
 
-.chat-title-icon {
-  font-size: 14px;
-}
-
-.chat-title-main {
-  color: #f9fafb;
-}
-
-.chat-title-badge {
+.user-chip .role {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
   font-size: 11px;
+}
+
+/* ===== ROOM TABS ===== */
+
+.room-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+  background: #141521;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid #26283a;
+}
+
+.room-tab {
+  border: none;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.room-tab.active {
+  background: linear-gradient(135deg, #b58cff, #f3c2ff);
+  color: #12091c;
+  font-weight: 600;
+}
+
+body.is-user .room-tab-admin {
+  display: none;
+}
+
+/* messages */
+
+.messages {
+  height: 330px;
+  overflow-y: auto;
+  padding: 10px;
+  border-radius: 10px;
+  background: #0c0d15;
+  border: 1px solid #222437;
+  margin-bottom: 7px;
+}
+
+.msg {
+  margin-bottom: 9px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  background: #181924;
+}
+
+.msg-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.msg-name {
+  font-weight: 600;
+}
+
+.msg-role {
   padding: 1px 6px;
   border-radius: 999px;
-  border: 1px solid #22c55e33;
-  color: #22c55e;
-  background: #022c22;
+  background: #222438;
+  color: var(--text-muted);
+  font-size: 10px;
+  text-transform: uppercase;
 }
 
-.header-right {
+.msg-role-admin {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.msg-time {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.msg-body {
+  font-size: 13px;
+}
+
+/* input row */
+
+.chat-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 9px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: #12131e;
+  color: var(--text-main);
+  font-size: 13px;
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-soft);
+}
+
+.chat-send-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 13px;
+  background: var(--accent);
+  color: #100b18;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chat-send-btn:hover {
+  filter: brightness(1.05);
+}
+
+/* ===== HỒ SƠ CÁ NHÂN (LEFT TOP) ===== */
+
+.profile-panel {
+  margin-bottom: 10px;
+  padding: 9px 9px 8px;
+  border-radius: 10px;
+  background: #1b1c2d;
+  border: 1px solid var(--accent-soft);
+}
+
+.profile-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
-  color: #9ca3af;
+  margin-bottom: 6px;
 }
 
-/* Nhãn user / admin góc phải */
-.user-badge {
+.profile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 20%, #f8f0ff 0, #b58cff 40%, #6b4aff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  color: #13081f;
+}
+
+.profile-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.profile-role {
+  font-size: 11px;
+  margin-top: 1px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: inline-block;
+}
+
+.profile-meta {
+  border-top: 1px solid #24263a;
+  padding-top: 5px;
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+  color: var(--text-muted);
+}
+
+.meta-value {
+  font-weight: 500;
+  color: #e5e7ff;
+}
+
+/* ===== ADMIN PANEL (LEFT BOTTOM) ===== */
+
+.hidden {
+  display: none !important;
+}
+
+.admin-panel {
+  margin-bottom: 10px;
+  padding: 8px 9px 7px;
+  border-radius: 10px;
+  background: var(--bg-panel-soft);
+  border: 1px solid var(--accent-soft);
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.admin-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.admin-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.admin-tag {
+  font-size: 11px;
   padding: 2px 8px;
   border-radius: 999px;
-  border: 1px solid #4b5563;
-  background: #020617;
-  font-size: 11px;
+  background: var(--accent);
+  color: #100b18;
+  font-weight: 600;
 }
 
-/* ============ DÒNG TRẠNG THÁI WHITELIST ============ */
-.status-line {
-  font-size: 11px;
-  color: #9ca3af;
-  padding-left: 2px;
+.admin-row {
+  margin-bottom: 6px;
+}
+
+.admin-input {
+  width: 100%;
+  padding: 7px 9px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: #12131e;
+  color: var(--text-main);
+  font-size: 13px;
+}
+
+.admin-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-soft);
+}
+
+.admin-mode-row {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.admin-mode-row input {
+  margin-right: 3px;
+}
+
+.admin-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: #100b18;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.admin-btn:hover {
+  filter: brightness(1.05);
+}
+
+.admin-result {
+  font-size: 12px;
+}
+
+.admin-result.ok {
+  color: #9af59f;
+}
+
+.admin-result.error {
+  color: #ff9898;
+}
+
+/* member list */
+
+.member-panel {
+  padding: 7px 5px 4px;
+}
+
+.member-header {
+  font-size: 13px;
+  font-weight: 600;
   margin-bottom: 4px;
 }
 
-/* ============ KHUNG CHÍNH: CHAT + SIDEBAR ============ */
-.main-layout {
-  display: flex;
-  gap: 10px;
-  min-height: 0; /* fix scroll nhảy */
-}
-
-/* bên trái: khung chat */
-.chat-panel {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  border-radius: 16px;
-  border: 1px solid #1f2937;
-  background: radial-gradient(circle at top left, #020617 0, #020617 60%, #000 100%);
-  padding: 8px;
-  min-height: 420px;
-}
-
-/* bên phải (nếu có) – list room, user, admin panel */
-.side-panel {
-  width: 220px;
-  max-width: 35%;
-  border-radius: 14px;
-  border: 1px solid #1f2937;
-  background: #020617;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 12px;
-}
-
-/* ============ KHUNG TIN NHẮN ============ */
-#messages {
-  flex: 1 1 auto;
-  background: #020617;
-  border-radius: 12px;
-  padding: 8px;
+.member-list {
+  max-height: 190px;
   overflow-y: auto;
-  font-size: 13px;
-  border: 1px solid #111827;
+  padding-right: 3px;
 }
 
-/* thanh cuộn dịu dịu */
-#messages::-webkit-scrollbar {
-  width: 6px;
-}
-#messages::-webkit-scrollbar-track {
-  background: transparent;
-}
-#messages::-webkit-scrollbar-thumb {
-  background: #4b5563;
-  border-radius: 999px;
+.member-row {
+  padding: 5px 5px;
+  border-radius: 7px;
+  background: #171828;
+  margin-bottom: 4px;
+  border: 1px solid #24263a;
 }
 
-/* tin nhắn */
-.message {
-  margin-bottom: 6px;
-  line-height: 1.3;
-}
-
-.message .meta {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 4px;
-  margin-right: 4px;
-}
-
-.message .name {
-  font-weight: 600;
-  color: #38bdf8;
-}
-
-.message.me .name {
-  color: #a855f7;
-}
-
-.message .time {
-  font-size: 11px;
-  color: #6b7280;
-}
-
-.message .text {
-  font-size: 13px;
-}
-
-.message.system {
-  font-size: 11px;
-  color: #9ca3af;
-  font-style: italic;
-}
-
-/* ============ INPUT GỬI TIN NHẮN ============ */
-.input-row {
-  margin-top: 8px;
+.member-main {
   display: flex;
-  gap: 8px;
-}
-
-.input-row input[type="text"],
-.input-row input[type="password"] {
-  flex: 1 1 auto;
-  padding: 8px 10px;
-  border-radius: 999px;
-  border: 1px solid #1f2937;
-  background: #020617;
-  color: #e5e7eb;
-  font-size: 13px;
-  outline: none;
-}
-
-.input-row input::placeholder {
-  color: #6b7280;
-}
-
-/* nút gửi */
-.btn-primary {
-  border-radius: 999px;
-  border: none;
-  padding: 0 16px;
-  font-size: 13px;
-  font-weight: 500;
-  background: linear-gradient(135deg, #a855f7, #ec4899);
-  color: #fff;
-  cursor: pointer;
-  white-space: nowrap;
-  height: 34px;
-}
-
-/* state disabled */
-button:disabled,
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-
-/* ============ FORM LOGIN / MODAL ============ */
-
-.login-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.76);
-  display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  z-index: 20;
-}
-
-.login-card {
-  width: 100%;
-  max-width: 400px;
-  background: #020617;
-  border-radius: 16px;
-  border: 1px solid #1f2937;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
-  padding: 18px 16px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.login-title {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 2px;
-}
-
-.login-sub {
   font-size: 12px;
-  color: #9ca3af;
+}
+
+.member-main-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.member-name {
+  font-weight: 600;
+}
+
+.member-role {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #222438;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.member-role-admin {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.member-code {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.member-code code {
+  background: #10111a;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+
+.member-empty {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.member-delete-btn {
+  border: none;
+  background: transparent;
+  color: #ff9aa9;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.member-delete-btn:hover {
+  color: #ff6b80;
+}
+
+/* ===== ONLINE PANEL (RIGHT) ===== */
+
+.online-panel {
+  font-size: 13px;
+}
+
+.online-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.online-sub {
+  font-size: 11px;
+  color: var(--text-muted);
   margin-bottom: 6px;
 }
 
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.online-section {
+  margin-bottom: 6px;
 }
 
-.login-form label {
+.online-section-title {
   font-size: 12px;
-  color: #d1d5db;
+  margin-bottom: 3px;
+  color: var(--text-muted);
 }
 
-.login-form input {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid #1f2937;
-  background: #020617;
-  color: #e5e7eb;
-  font-size: 13px;
-  outline: none;
-}
-
-.login-actions {
-  margin-top: 4px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-/* nút phụ */
-.btn-ghost {
-  border-radius: 999px;
-  border: 1px solid #4b5563;
-  background: transparent;
-  color: #e5e7eb;
-  padding: 6px 12px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-/* ============ SIDE PANEL NẾU DÙNG ============ */
-.side-section-title {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #6b7280;
-  margin-bottom: 2px;
-}
-
-.side-list {
-  background: #020617;
-  border-radius: 10px;
-  border: 1px solid #111827;
-  padding: 6px;
-  max-height: 170px;
+.presence-list {
+  max-height: 150px;
   overflow-y: auto;
+  padding-right: 3px;
+}
+
+.presence-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 5px;
+  border-radius: 7px;
+  background: #181927;
+  margin-bottom: 3px;
+}
+
+.presence-name {
   font-size: 12px;
 }
 
-/* ============ RESPONSIVE MOBILE ============ */
+.presence-role {
+  margin-left: auto;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #222438;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
 
-@media (max-width: 900px) {
-  body {
-    padding: 8px;
-  }
+.presence-role-admin {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
 
-  .app {
-    padding: 10px;
-    min-height: calc(100vh - 16px);
-  }
+.presence-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+}
 
-  .main-layout {
-    flex-direction: column;
-  }
+.presence-dot.online {
+  background: #57f297;
+}
 
-  .side-panel {
-    width: 100%;
+.presence-dot.offline {
+  background: #777a8f;
+}
+
+.presence-offline .presence-row {
+  opacity: 0.8;
+}
+
+/* ===== RESPONSIVE / AUTO-HIDE SIDEBARS ===== */
+
+/* Laptop & mobile: sidebars overlay, chat ở giữa */
+@media (max-width: 1399px) {
+  .chat-wrapper {
     max-width: 100%;
-    order: -1; /* panel phụ lên trên nếu muốn */
   }
 
-  #messages {
-    max-height: 55vh;
+  .chat-layout {
+    display: block; /* chỉ chat-main trong flow */
+  }
+
+  .chat-main {
+    margin: 0 auto;
+  }
+
+  .hide-desktop {
+    display: inline-flex;
+  }
+
+  .sidebar-left,
+  .sidebar-right {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 280px;
+    max-width: 90vw;
+    z-index: 50;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8);
+  }
+
+  .sidebar-left {
+    left: 10px;
+    transform: translateY(-50%) translateX(-110%);
+  }
+
+  .sidebar-right {
+    right: 10px;
+    transform: translateY(-50%) translateX(110%);
+  }
+
+  body.show-admin #adminSidebar {
+    transform: translateY(-50%) translateX(0);
+  }
+
+  body.show-presence #presenceSidebar {
+    transform: translateY(-50%) translateX(0);
+  }
+
+  .messages {
+    height: 300px;
   }
 }
 
-@media (max-width: 600px) {
-  .chat-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
+/* Mobile nhỏ */
+@media (max-width: 720px) {
+  .chat-body {
+    padding: 10px 0;
   }
 
-  .input-row {
-    flex-direction: row;
+  .chat-wrapper {
+    border-radius: 0;
   }
 
-  .btn-primary {
-    padding: 0 12px;
-    font-size: 12px;
+  .messages {
+    height: 260px;
   }
 
-  .login-card {
-    margin: 0 8px;
+  .sidebar-left,
+  .sidebar-right {
+    top: 8px;
+    bottom: 8px;
+    transform: translateX(-110%);
+    height: auto;
+  }
+
+  body.show-admin #adminSidebar,
+  body.show-presence #presenceSidebar {
+    top: 8px;
+    bottom: 8px;
+    transform: translateX(0);
   }
 }

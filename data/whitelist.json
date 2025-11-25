@@ -3,6 +3,10 @@
     "hebi": {
       "code": "220924",
       "role": "admin"
+    },
+    "tét1": {
+      "code": "429708",
+      "role": "user"
     }
   }
 }

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Hebi Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="chat-body">
+
+  <div class="chat-wrapper">
+    <div class="chat-layout">
+
+      <!-- CỘT TRÁI: HỒ SƠ + (ADMIN TOOLS) -->
+      <aside id="adminSidebar" class="sidebar sidebar-left">
+        <!-- Hồ sơ cá nhân: dùng cho cả user & admin -->
+        <div class="profile-panel">
+          <div class="profile-header">
+            <div id="profileAvatar" class="profile-avatar">H</div>
+            <div>
+              <div id="profileName" class="profile-name">...</div>
+              <div id="profileRole" class="profile-role">user</div>
+            </div>
+          </div>
+
+          <div class="profile-meta">
+            <div class="meta-row">
+              <span>Mã đăng nhập</span>
+              <span id="profileCode" class="meta-value">••••••</span>
+            </div>
+            <div class="meta-row">
+              <span>Thiết bị</span>
+              <span class="meta-value">Web</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phần dưới chỉ dành cho admin -->
+        <div class="admin-panel only-admin">
+          <div class="admin-header">
+            <div>
+              <div class="admin-title">Bảng kiểm soát thành viên</div>
+              <div class="admin-sub">
+                Thêm user mới, chọn mã random hoặc tự đặt mã.
+              </div>
+            </div>
+            <span class="admin-tag">Admin</span>
+          </div>
+
+          <div class="admin-row">
+            <input id="adminNewUsername" class="admin-input" placeholder="Tên thành viên mới">
+          </div>
+
+          <div class="admin-row admin-mode-row">
+            <label>
+              <input type="radio" name="passMode" value="auto" checked>
+              Mã random 6 số
+            </label>
+            <label>
+              <input type="radio" name="passMode" value="custom">
+              Tự nhập mã
+            </label>
+          </div>
+
+          <div class="admin-row" id="customCodeRow" style="display:none;">
+            <input id="adminCustomCode" class="admin-input" placeholder="Nhập mã cho user (vd: 123456)">
+          </div>
+
+          <div class="admin-row">
+            <button id="adminCreateBtn" class="admin-btn">Thêm thành viên</button>
+          </div>
+
+          <div id="adminResult" class="admin-result"></div>
+        </div>
+
+        <div class="member-panel only-admin">
+          <div class="member-header">Danh sách thành viên</div>
+          <div id="memberList" class="member-list"></div>
+        </div>
+      </aside>
+
+      <!-- CỘT GIỮA: CHAT CHÍNH -->
+      <main class="chat-main">
+        <div class="chat-top">
+          <div class="chat-top-left">
+            <!-- nút mở sidebar trái (profile + admin) ở màn nhỏ -->
+            <button id="openAdminBtn" class="icon-btn hide-desktop">
+              ☰
+            </button>
+            <h2>💬 Hebi Chat</h2>
+          </div>
+
+          <div class="chat-top-right">
+            <span class="badge">whitelist only</span>
+            <!-- nút mở sidebar phải (online) ở màn nhỏ -->
+            <button id="openPresenceBtn" class="icon-btn hide-desktop">
+              👥
+            </button>
+          </div>
+        </div>
+
+        <!-- TABS PHÒNG CHAT -->
+        <div class="room-tabs">
+          <button class="room-tab active" data-room="p1">Phòng 1</button>
+          <button class="room-tab" data-room="p2">Phòng 2</button>
+          <button class="room-tab" data-room="p3">Phòng 3</button>
+          <button class="room-tab" data-room="dev">Dev</button>
+          <button class="room-tab room-tab-admin" data-room="admin">Admin</button>
+        </div>
+
+        <div id="userChip" class="user-chip">
+          <span class="name">...</span>
+          <span class="role">user</span>
+        </div>
+
+        <div id="messages" class="messages"></div>
+
+        <div class="chat-input-row">
+          <input id="message" class="chat-input" placeholder="Nhập tin nhắn..." />
+          <button class="chat-send-btn" onclick="sendMessage()">📩 Gửi</button>
+        </div>
+      </main>
+
+      <!-- CỘT PHẢI: ONLINE / OFFLINE -->
+      <aside id="presenceSidebar" class="sidebar sidebar-right">
+        <div class="online-panel">
+          <div class="online-title">Trạng thái</div>
+          <div class="online-sub">Ai đang online trên Hebi Chat.</div>
+
+          <div class="online-section">
+            <div class="online-section-title">Đang online</div>
+            <div id="onlineList" class="presence-list"></div>
+          </div>
+
+          <div class="online-section" id="offlineBlock">
+            <div class="online-section-title">Offline (chỉ admin thấy)</div>
+            <div id="offlineList" class="presence-list presence-offline"></div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/chat.js"></script>
+</body>
+</html>
