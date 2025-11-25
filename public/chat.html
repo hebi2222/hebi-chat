@@ -1,148 +1,1077 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Hebi Chat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8" />
+  <title>Hebi Chat – Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <!-- Custom theme -->
+  <style>
+    :root {
+      --bg-main: #111217;
+      --bg-panel: #181925;
+      --bg-soft: #1f2130;
+      --accent: #b58cff;
+      --accent-soft: rgba(181, 140, 255, 0.15);
+      --text-main: #f5f5ff;
+      --text-muted: #a3a6b8;
+      --border-subtle: #26283a;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #2a2140 0, #111217 60%);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    .chat-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 16px 12px;
+    }
+
+    .chat-wrapper {
+      width: 100%;
+      max-width: 1400px;
+      background: var(--bg-panel);
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.8);
+      padding: 14px 16px 12px;
+    }
+
+    @media (min-width: 1600px) {
+      .chat-wrapper {
+        max-width: 1550px;
+      }
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .chat-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chat-title h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .badge-soft {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .room-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      background: #141521;
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid #25273a;
+    }
+
+    .room-tab {
+      border: none;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 12px;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .room-tab.active {
+      background: linear-gradient(135deg, #b58cff, #f2c4ff);
+      color: #13081f;
+      font-weight: 600;
+    }
+
+    .user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #151624;
+      border: 1px solid #25273a;
+      font-size: 13px;
+    }
+
+    .user-pill-role {
+      font-size: 11px;
+      padding: 1px 7px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .panel {
+      background: #151624;
+      border-radius: 14px;
+      border: 1px solid #25273a;
+      padding: 10px 10px 8px;
+      margin-bottom: 10px;
+    }
+
+    .panel-soft {
+      background: #1a1b2a;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .panel-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #f8f0ff 0, #b58cff 40%, #6b4aff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #110a18;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .profile-meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .profile-meta-row span:last-child {
+      color: #e5e7ff;
+      font-weight: 500;
+    }
+
+    .admin-input,
+    .admin-select {
+      background: #10111a !important;
+      border-color: #25273a !important;
+      color: var(--text-main) !important;
+    }
+
+    .admin-input:focus,
+    .admin-select:focus {
+      border-color: var(--accent) !important;
+      box-shadow: 0 0 0 1px rgba(181, 140, 255, 0.4) !important;
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      border: none;
+      color: #110a18;
+      font-weight: 600;
+    }
+
+    .btn-accent:hover {
+      filter: brightness(1.05);
+    }
+
+    .member-row {
+      padding: 5px 6px;
+      border-radius: 8px;
+      background: #181927;
+      border: 1px solid #25273a;
+      font-size: 12px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .member-code {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .member-code code {
+      background: #10111a;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    .member-role-badge {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #222438;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-left: 6px;
+    }
+
+    .member-role-badge.admin {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .member-delete {
+      border: none;
+      background: transparent;
+      color: #ff9aa9;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .member-delete:hover {
+      color: #ff6b80;
+    }
+
+    .msg-list {
+      background: #10111a;
+      border-radius: 14px;
+      border: 1px solid #25273a;
+      padding: 10px;
+      height: 480px;
+      overflow-y: auto;
+      margin-bottom: 8px;
+    }
+
+    @media (min-height: 900px) {
+      .msg-list {
+        height: 580px;
+      }
+    }
+
+    .msg-item {
+      margin-bottom: 8px;
+      padding: 7px 8px;
+      border-radius: 8px;
+      background: #181924;
+    }
+
+    .msg-head {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    .msg-name {
+      font-weight: 600;
+    }
+
+    .msg-role {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #222438;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .msg-role.admin {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .msg-time {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .msg-body {
+      font-size: 13px;
+    }
+
+    .presence-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    .presence-dot.online {
+      background: #57f297;
+    }
+
+    .presence-dot.offline {
+      background: #787b91;
+    }
+
+    .presence-role {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #222438;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .presence-role.admin {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .msg-input {
+      background: #10111a;
+      border-color: #25273a;
+      color: var(--text-main);
+      border-radius: 999px;
+      padding-left: 14px;
+    }
+
+    .msg-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(181, 140, 255, 0.4);
+      background: #10111a;
+      color: var(--text-main);
+    }
+
+    @media (max-width: 992px) {
+      .chat-shell {
+        padding: 10px 6px;
+      }
+      .chat-wrapper {
+        border-radius: 12px;
+      }
+      .msg-list {
+        height: 360px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .chat-shell {
+        padding: 0;
+      }
+      .chat-wrapper {
+        border-radius: 0;
+        min-height: 100vh;
+      }
+      .msg-list {
+        height: 300px;
+      }
+    }
+  </style>
 </head>
-<body class="chat-body">
-
-  <div class="chat-wrapper">
-    <div class="chat-layout">
-
-      <!-- CỘT TRÁI: HỒ SƠ + (ADMIN TOOLS) -->
-      <aside id="adminSidebar" class="sidebar sidebar-left">
-        <!-- Hồ sơ cá nhân: dùng cho cả user & admin -->
-        <div class="profile-panel">
-          <div class="profile-header">
-            <div id="profileAvatar" class="profile-avatar">H</div>
-            <div>
-              <div id="profileName" class="profile-name">...</div>
-              <div id="profileRole" class="profile-role">user</div>
-            </div>
-          </div>
-
-          <div class="profile-meta">
-            <div class="meta-row">
-              <span>Mã đăng nhập</span>
-              <span id="profileCode" class="meta-value">••••••</span>
-            </div>
-            <div class="meta-row">
-              <span>Thiết bị</span>
-              <span class="meta-value">Web</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Phần dưới chỉ dành cho admin -->
-        <div class="admin-panel only-admin">
-          <div class="admin-header">
-            <div>
-              <div class="admin-title">Bảng kiểm soát thành viên</div>
-              <div class="admin-sub">
-                Thêm user mới, chọn mã random hoặc tự đặt mã.
-              </div>
-            </div>
-            <span class="admin-tag">Admin</span>
-          </div>
-
-          <div class="admin-row">
-            <input id="adminNewUsername" class="admin-input" placeholder="Tên thành viên mới">
-          </div>
-
-          <div class="admin-row admin-mode-row">
-            <label>
-              <input type="radio" name="passMode" value="auto" checked>
-              Mã random 6 số
-            </label>
-            <label>
-              <input type="radio" name="passMode" value="custom">
-              Tự nhập mã
-            </label>
-          </div>
-
-          <div class="admin-row" id="customCodeRow" style="display:none;">
-            <input id="adminCustomCode" class="admin-input" placeholder="Nhập mã cho user (vd: 123456)">
-          </div>
-
-          <div class="admin-row">
-            <button id="adminCreateBtn" class="admin-btn">Thêm thành viên</button>
-          </div>
-
-          <div id="adminResult" class="admin-result"></div>
-        </div>
-
-        <div class="member-panel only-admin">
-          <div class="member-header">Danh sách thành viên</div>
-          <div id="memberList" class="member-list"></div>
-        </div>
-      </aside>
-
-      <!-- CỘT GIỮA: CHAT CHÍNH -->
-      <main class="chat-main">
-        <div class="chat-top">
-          <div class="chat-top-left">
-            <!-- nút mở sidebar trái (profile + admin) ở màn nhỏ -->
-            <button id="openAdminBtn" class="icon-btn hide-desktop">
-              ☰
-            </button>
-            <h2>💬 Hebi Chat</h2>
-          </div>
-
-          <div class="chat-top-right">
-            <span class="badge">whitelist only</span>
-            <!-- nút mở sidebar phải (online) ở màn nhỏ -->
-            <button id="openPresenceBtn" class="icon-btn hide-desktop">
-              👥
-            </button>
-          </div>
-        </div>
-
-        <!-- TABS PHÒNG CHAT -->
-        <div class="room-tabs">
-          <button class="room-tab active" data-room="p1">Phòng 1</button>
-          <button class="room-tab" data-room="p2">Phòng 2</button>
-          <button class="room-tab" data-room="p3">Phòng 3</button>
-          <button class="room-tab" data-room="dev">Dev</button>
-          <button class="room-tab room-tab-admin" data-room="admin">Admin</button>
-        </div>
-
-        <div id="userChip" class="user-chip">
-          <span class="name">...</span>
-          <span class="role">user</span>
-        </div>
-
-        <div id="messages" class="messages"></div>
-
-        <div class="chat-input-row">
-          <input id="message" class="chat-input" placeholder="Nhập tin nhắn..." />
-          <button class="chat-send-btn" onclick="sendMessage()">📩 Gửi</button>
-        </div>
-      </main>
-
-      <!-- CỘT PHẢI: ONLINE / OFFLINE -->
-      <aside id="presenceSidebar" class="sidebar sidebar-right">
-        <div class="online-panel">
-          <div class="online-title">Trạng thái</div>
-          <div class="online-sub">Ai đang online trên Hebi Chat.</div>
-
-          <div class="online-section">
-            <div class="online-section-title">Đang online</div>
-            <div id="onlineList" class="presence-list"></div>
-          </div>
-
-          <div class="online-section" id="offlineBlock">
-            <div class="online-section-title">Offline (chỉ admin thấy)</div>
-            <div id="offlineList" class="presence-list presence-offline"></div>
-          </div>
-        </div>
-      </aside>
-
-    </div>
+<body>
+  <div id="root" class="chat-shell">
+    <!-- React here -->
   </div>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/chat.js"></script>
+  <!-- React, ReactDOM, Babel, Socket.IO, Bootstrap JS -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // Parse query from /chat?username=..&code=..
+    function useQueryParams() {
+      const [params] = useState(() => {
+        const u = new URL(window.location.href);
+        return {
+          username: u.searchParams.get("username") || "",
+          code: u.searchParams.get("code") || "",
+        };
+      });
+      return params;
+    }
+
+    function App() {
+      const params = useQueryParams();
+      const [user, setUser] = useState(null); // {username, role, code}
+      const [room, setRoom] = useState("p1");
+      const [messages, setMessages] = useState([]);
+      const [online, setOnline] = useState([]);
+      const [offline, setOffline] = useState([]);
+      const [connected, setConnected] = useState(false);
+      const [loading, setLoading] = useState(true);
+      const [socketError, setSocketError] = useState("");
+      const [input, setInput] = useState("");
+      const socketRef = useRef(null);
+      const listRef = useRef(null);
+
+      // Scroll messages when new
+      useEffect(() => {
+        if (listRef.current) {
+          listRef.current.scrollTop = listRef.current.scrollHeight;
+        }
+      }, [messages]);
+
+      // Step 1: verify login via /login
+      useEffect(() => {
+        async function verify() {
+          if (!params.username || !params.code) {
+            setLoading(false);
+            return;
+          }
+          try {
+            const res = await fetch("/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                username: params.username,
+                code: params.code,
+              }),
+            });
+            const data = await res.json();
+            if (!data.success) {
+              setLoading(false);
+              return;
+            }
+            setUser({
+              username: data.username,
+              role: data.role || "user",
+              code: params.code,
+            });
+          } catch (e) {
+            console.error(e);
+          } finally {
+            setLoading(false);
+          }
+        }
+        verify();
+      }, [params.username, params.code]);
+
+      // Step 2: connect socket when user ok
+      useEffect(() => {
+        if (!user) return;
+
+        const s = io({
+          transports: ["websocket", "polling"],
+        });
+        socketRef.current = s;
+
+        s.on("connect", () => {
+          setConnected(true);
+          setSocketError("");
+          s.emit("auth", {
+            username: user.username,
+            code: user.code,
+          });
+        });
+
+        s.on("disconnect", () => {
+          setConnected(false);
+        });
+
+        s.on("auth-ok", (info) => {
+          // server has accepted auth
+        });
+
+        s.on("auth-failed", (payload) => {
+          setSocketError(payload.message || "Auth failed, vui lòng login lại.");
+        });
+
+        s.on("chat-history", (history) => {
+          setMessages(history || []);
+        });
+
+        s.on("chat-message", (msg) => {
+          setMessages((prev) => [...prev, msg]);
+        });
+
+        s.on("presence", ({ online, offline }) => {
+          setOnline(online || []);
+          setOffline(offline || []);
+        });
+
+        return () => {
+          s.disconnect();
+        };
+      }, [user]);
+
+      const isAdmin = user && user.role === "admin";
+
+      function handleSend(e) {
+        e && e.preventDefault();
+        if (!socketRef.current || !input.trim()) return;
+        socketRef.current.emit("chat-message", { text: input.trim() });
+        setInput("");
+      }
+
+      function switchRoom(newRoom) {
+        if (!socketRef.current) return;
+        setRoom(newRoom);
+        socketRef.current.emit("switch-room", { room: newRoom });
+      }
+
+      if (loading) {
+        return (
+          <div className="d-flex w-100 justify-content-center align-items-center">
+            <div className="text-center text-light">
+              <div className="spinner-border text-light mb-2" />
+              <div>Đang kiểm tra session...</div>
+            </div>
+          </div>
+        );
+      }
+
+      if (!user) {
+        return (
+          <div className="d-flex w-100 justify-content-center align-items-center">
+            <div className="text-center text-light">
+              <p>Không có thông tin đăng nhập hợp lệ.</p>
+              <a href="/" className="btn btn-accent">
+                Quay lại trang login
+              </a>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="chat-wrapper">
+          {/* Header + room tabs */}
+          <div className="chat-header">
+            <div className="chat-title">
+              <h2>💬 Hebi Chat</h2>
+              <span className="badge-soft">whitelist only</span>
+            </div>
+            <div className="d-flex flex-column align-items-end">
+              <div className="user-pill mb-1">
+                <span>{user.username}</span>
+                <span className="user-pill-role">
+                  {user.role === "admin" ? "Admin" : "User"}
+                </span>
+              </div>
+              <small
+                className="text-muted"
+                style={{ fontSize: "11px", textAlign: "right" }}
+              >
+                Kết nối:{" "}
+                <span style={{ color: connected ? "#57f297" : "#ff9aa9" }}>
+                  {connected ? "Online" : "Đã ngắt"}
+                </span>
+              </small>
+            </div>
+          </div>
+
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <div className="room-tabs">
+              {["p1", "p2", "p3", "dev"]
+                .concat(isAdmin ? ["admin"] : [])
+                .map((r) => (
+                  <button
+                    key={r}
+                    className={
+                      "room-tab" + (room === r ? " active" : "")
+                    }
+                    onClick={() => switchRoom(r)}
+                  >
+                    {r === "p1"
+                      ? "Phòng Chat 1"
+                      : r === "p2"
+                      ? "Phòng Chat 2"
+                      : r === "p3"
+                      ? "Phòng Chat 3"
+                      : r === "dev"
+                      ? "Phòng Dev"
+                      : "Phòng Admin"}
+                  </button>
+                ))}
+            </div>
+            <small
+              style={{
+                fontSize: "11px",
+                color: "var(--text-muted)",
+              }}
+              className="ms-2 d-none d-md-inline"
+            >
+              Múi giờ: Asia/Ho_Chi_Minh
+            </small>
+          </div>
+
+          {socketError && (
+            <div className="alert alert-danger py-1 px-2 mb-2">
+              {socketError}
+            </div>
+          )}
+
+          {/* Layout 3 cột bootstrap */}
+          <div className="row g-3">
+            {/* LEFT – Profile + Admin */}
+            <div className="col-12 col-lg-3">
+              {/* Hồ sơ */}
+              <div className="panel">
+                <div className="d-flex align-items-center mb-2">
+                  <div className="profile-avatar">
+                    {user.username.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="ms-2">
+                    <div style={{ fontSize: "14px", fontWeight: 600 }}>
+                      {user.username}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        padding: "2px 8px",
+                        borderRadius: "999px",
+                        background: "var(--accent-soft)",
+                        color: "var(--accent)",
+                        display: "inline-block",
+                        marginTop: "2px",
+                      }}
+                    >
+                      {isAdmin ? "Admin" : "Thành viên"}
+                    </div>
+                  </div>
+                </div>
+                <hr className="my-2" />
+                <div className="d-flex flex-column gap-1">
+                  <div className="profile-meta-row">
+                    <span>Phòng hiện tại</span>
+                    <span>{room}</span>
+                  </div>
+                  <div className="profile-meta-row">
+                    <span>Trạng thái</span>
+                    <span style={{ color: "#57f297" }}>Online</span>
+                  </div>
+                  <div className="profile-meta-row">
+                    <span>Vai trò</span>
+                    <span>{isAdmin ? "Admin / Owner" : "User"}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Admin Panel */}
+              {isAdmin && <AdminPanel />}
+            </div>
+
+            {/* CENTER – Chat */}
+            <div className="col-12 col-lg-6">
+              <div ref={listRef} className="msg-list">
+                {messages.length === 0 && (
+                  <div className="text-center text-muted" style={{ fontSize: "13px" }}>
+                    Chưa có tin nhắn nào trong phòng này.
+                  </div>
+                )}
+                {messages.map((m, idx) => (
+                  <div key={idx} className="msg-item">
+                    <div className="msg-head">
+                      <span className="msg-name">{m.username}</span>
+                      <span
+                        className={
+                          "msg-role" +
+                          (m.role === "admin" ? " admin" : "")
+                        }
+                      >
+                        {m.role}
+                      </span>
+                      <span className="msg-time">{m.time}</span>
+                    </div>
+                    <div className="msg-body">{m.text}</div>
+                  </div>
+                ))}
+              </div>
+
+              <form onSubmit={handleSend} className="d-flex gap-2">
+                <input
+                  className="form-control msg-input"
+                  placeholder="Nhập tin nhắn và nhấn Enter..."
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                />
+                <button type="submit" className="btn btn-accent">
+                  Gửi
+                </button>
+              </form>
+            </div>
+
+            {/* RIGHT – Online / Offline */}
+            <div className="col-12 col-lg-3">
+              <div className="panel panel-soft">
+                <div className="panel-title mb-1">Hoạt động</div>
+                <div className="panel-sub mb-2">
+                  Thấy được ai đang online + toàn bộ whitelist.
+                </div>
+
+                <div className="mb-2">
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--text-muted)",
+                      marginBottom: "3px",
+                    }}
+                  >
+                    Online ({online.length})
+                  </div>
+                  {online.length === 0 && (
+                    <div
+                      className="text-muted"
+                      style={{ fontSize: "12px" }}
+                    >
+                      Chỉ còn mình bạn ở đây...
+                    </div>
+                  )}
+                  {online.map((u) => (
+                    <div
+                      key={u.username}
+                      className="d-flex align-items-center justify-content-between mb-1"
+                      style={{ fontSize: "12px" }}
+                    >
+                      <div>
+                        <span className="presence-dot online"></span>
+                        {u.username}
+                      </div>
+                      <span
+                        className={
+                          "presence-role" +
+                          (u.role === "admin" ? " admin" : "")
+                        }
+                      >
+                        {u.role}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <hr className="my-2" />
+
+                <div className="mb-1">
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--text-muted)",
+                      marginBottom: "3px",
+                    }}
+                  >
+                    Offline ({offline.length})
+                  </div>
+                  <div
+                    className="overflow-auto"
+                    style={{ maxHeight: "200px" }}
+                  >
+                    {offline.map((u) => (
+                      <div
+                        key={u.username}
+                        className="d-flex align-items-center justify-content-between mb-1"
+                        style={{ fontSize: "12px", opacity: 0.8 }}
+                      >
+                        <div>
+                          <span className="presence-dot offline"></span>
+                          {u.username}
+                        </div>
+                        <span
+                          className={
+                            "presence-role" +
+                            (u.role === "admin" ? " admin" : "")
+                          }
+                        >
+                          {u.role}
+                        </span>
+                      </div>
+                    ))}
+                    {offline.length === 0 && (
+                      <div
+                        className="text-muted"
+                        style={{ fontSize: "12px" }}
+                      >
+                        Chưa có ai được whitelist thêm.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function AdminPanel() {
+      const [newUser, setNewUser] = useState("");
+      const [mode, setMode] = useState("auto");
+      const [customCode, setCustomCode] = useState("");
+      const [members, setMembers] = useState([]);
+      const [msg, setMsg] = useState("");
+      const [msgType, setMsgType] = useState("info");
+      const [loadingMembers, setLoadingMembers] = useState(false);
+
+      async function fetchMembers() {
+        setLoadingMembers(true);
+        try {
+          const res = await fetch("/admin/users", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ adminName: "hebi", adminPass: "220924" }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            setMembers(data.users || []);
+          }
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setLoadingMembers(false);
+        }
+      }
+
+      useEffect(() => {
+        fetchMembers();
+      }, []);
+
+      async function handleAdd(e) {
+        e.preventDefault();
+        setMsg("");
+        const name = newUser.trim();
+        if (!name) {
+          setMsg("Điền tên user trước đã.");
+          setMsgType("error");
+          return;
+        }
+
+        try {
+          const res = await fetch("/admin/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              adminName: "hebi",
+              adminPass: "220924",
+              newUsername: name,
+              mode,
+              customCode: customCode.trim(),
+            }),
+          });
+          const data = await res.json();
+          if (!data.success) {
+            setMsg(data.message || "Không thêm được user.");
+            setMsgType("error");
+          } else {
+            setMsg(
+              `Đã thêm ${data.username} với mã ${data.code} (${data.mode}).`
+            );
+            setMsgType("ok");
+            setNewUser("");
+            setCustomCode("");
+            fetchMembers();
+          }
+        } catch (e) {
+          console.error(e);
+          setMsg("Lỗi kết nối server.");
+          setMsgType("error");
+        }
+      }
+
+      async function handleDelete(username) {
+        if (!window.confirm("Xoá user '" + username + "' khỏi whitelist?"))
+          return;
+        try {
+          const res = await fetch("/admin/delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              adminName: "hebi",
+              adminPass: "220924",
+              targetUsername: username,
+            }),
+          });
+          const data = await res.json();
+          if (!data.success) {
+            setMsg(data.message || "Không xoá được user.");
+            setMsgType("error");
+          } else {
+            setMsg("Đã xoá user " + username);
+            setMsgType("ok");
+            fetchMembers();
+          }
+        } catch (e) {
+          console.error(e);
+          setMsg("Lỗi kết nối server.");
+          setMsgType("error");
+        }
+      }
+
+      return (
+        <div className="panel panel-soft">
+          <div className="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <div className="panel-title">Bảng điều khiển Admin</div>
+              <div className="panel-sub">
+                Thêm / xoá whitelist trực tiếp, auto sync với server.
+              </div>
+            </div>
+            <span
+              style={{
+                fontSize: "11px",
+                padding: "2px 8px",
+                borderRadius: "999px",
+                background: "var(--accent)",
+                color: "#110a18",
+                fontWeight: 600,
+              }}
+            >
+              OWNER
+            </span>
+          </div>
+
+          <form onSubmit={handleAdd} className="mb-2">
+            <div className="mb-2">
+              <input
+                className="form-control admin-input"
+                placeholder="Tên user mới (vd: friend01)"
+                value={newUser}
+                onChange={(e) => setNewUser(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-2">
+              <div
+                style={{ fontSize: "12px", color: "var(--text-muted)" }}
+                className="mb-1"
+              >
+                Chế độ mã:
+              </div>
+              <div className="d-flex gap-2">
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="mode"
+                    id="modeAuto"
+                    checked={mode === "auto"}
+                    onChange={() => setMode("auto")}
+                  />
+                  <label className="form-check-label" htmlFor="modeAuto">
+                    Tự random (6 số)
+                  </label>
+                </div>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="mode"
+                    id="modeCustom"
+                    checked={mode === "custom"}
+                    onChange={() => setMode("custom")}
+                  />
+                  <label className="form-check-label" htmlFor="modeCustom">
+                    Tự nhập mã
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {mode === "custom" && (
+              <div className="mb-2">
+                <input
+                  className="form-control admin-input"
+                  placeholder="Nhập mã 4–8 chữ số"
+                  value={customCode}
+                  onChange={(e) => setCustomCode(e.target.value)}
+                />
+              </div>
+            )}
+
+            <button type="submit" className="btn btn-accent w-100">
+              Thêm / cấp whitelist
+            </button>
+          </form>
+
+          {msg && (
+            <div
+              style={{
+                fontSize: "12px",
+                color: msgType === "ok" ? "#9af59f" : "#ff9aa9",
+              }}
+              className="mb-2"
+            >
+              {msg}
+            </div>
+          )}
+
+          <div className="mb-1 d-flex justify-content-between align-items-center">
+            <span style={{ fontSize: "13px", fontWeight: 600 }}>
+              Danh sách thành viên
+            </span>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-light"
+              style={{
+                borderRadius: "999px",
+                fontSize: "11px",
+                padding: "1px 8px",
+              }}
+              onClick={fetchMembers}
+              disabled={loadingMembers}
+            >
+              {loadingMembers ? "Đang tải..." : "Reload"}
+            </button>
+          </div>
+
+          <div
+            className="overflow-auto"
+            style={{ maxHeight: "190px", fontSize: "12px" }}
+          >
+            {members.length === 0 && (
+              <div className="text-muted" style={{ fontSize: "12px" }}>
+                Chưa có dữ liệu thành viên.
+              </div>
+            )}
+            {members.map((m) => (
+              <div key={m.username} className="member-row">
+                <div>
+                  <span style={{ fontWeight: 600 }}>{m.username}</span>
+                  <span
+                    className={
+                      "member-role-badge" +
+                      (m.role === "admin" ? " admin" : "")
+                    }
+                  >
+                    {m.role}
+                  </span>
+                  <div className="member-code">
+                    mã: <code>{m.code}</code>
+                  </div>
+                </div>
+                {m.username !== "hebi" && (
+                  <button
+                    type="button"
+                    className="member-delete"
+                    onClick={() => handleDelete(m.username)}
+                  >
+                    xoá
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
 </body>
 </html>
